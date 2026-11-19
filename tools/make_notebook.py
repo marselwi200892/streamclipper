@@ -176,6 +176,10 @@ min_score = 50  #@param {type:"slider", min:0, max:100, step:5}
 #@markdown How many of the best clips get an MP4 and a CapCut draft (0 = all above the minimum score).
 #@markdown Every clip above the score is listed in clips.csv and index.html either way.
 max_clips = 10  #@param {type:"integer"}
+#@markdown Clip length in seconds: the shortest and the longest clip that may be built
+#@markdown (rendered clips stay at or below 59.5 s, so keep `max_dur` at 59 or less).
+min_dur = 15  #@param {type:"integer"}
+max_dur = 60  #@param {type:"integer"}
 ratio = "9:16"  #@param ["9:16", "1:1"]
 llm = "auto"  #@param ["auto", "ollama", "none"]
 make_drafts = True  #@param {type:"boolean"}
@@ -213,6 +217,8 @@ else:
             hook_style=hook_style,
             min_score=min_score,
             max_clips=max_clips,
+            min_dur=min_dur,
+            max_dur=max_dur,
             ratio=ratio,
             llm=LLM,
             llm_model=globals().get("llm_model", "") if LLM == "ollama" else "",

@@ -58,6 +58,8 @@ def test_colab_argv_only_adds_non_default_effects(tmp_path):
         "prefix": "clip",
         "max_clips": 3,
         "min_score": 50,
+        "min_dur": 15.0,
+        "max_dur": 60.0,
         "llm": "none",
         "whisper_model": "auto",
         "device": "auto",

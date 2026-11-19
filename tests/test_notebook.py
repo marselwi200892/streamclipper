@@ -80,6 +80,15 @@ def test_53_options_and_vision_install():
     assert "Publishing to YouTube Shorts or Instagram Reels runs from your PC" in cells[0]
 
 
+def test_min_and_max_dur_are_form_fields_passed_to_run_pipeline():
+    cells = [c.source for c in _nb().cells]
+    opts = next(c for c in cells if c.startswith("#@title 6."))
+    assert 'min_dur = 15  #@param {type:"integer"}' in opts
+    assert 'max_dur = 60  #@param {type:"integer"}' in opts
+    run = next(c for c in cells if c.startswith("#@title 7."))
+    assert "min_dur=min_dur" in run and "max_dur=max_dur" in run
+
+
 def test_caption_style_defaults_to_auto_with_the_gallery():
     src = "\n".join(c.source for c in _nb().cells if c.cell_type == "code")
     assert src.count('caption_style = "auto"  #@param ["auto", ') == 2

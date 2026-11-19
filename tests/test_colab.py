@@ -29,10 +29,13 @@ def test_run_pipeline_builds_the_clip_stream_argv_and_collects_outputs(tmp_path,
     calls = []
     monkeypatch.setattr(commands, "clip_stream", _fake_clip_stream(calls))
     out = tmp_path / "out"
-    res = colab.run_pipeline(str(src), out_dir=str(out), max_clips=0, min_score=55, llm="ollama", resume=False)
+    res = colab.run_pipeline(
+        str(src), out_dir=str(out), max_clips=0, min_score=55, min_dur=20, max_dur=45, llm="ollama", resume=False
+    )
     (args,) = calls
     assert args.input == str(src.resolve()) and not args.url
     assert args.max_clips == 0 and args.min_score == 55.0 and args.llm == "ollama"
+    assert args.min_dur == 20.0 and args.max_dur == 45.0
     assert args.render and args.portable_drafts and not args.no_draft and args.fresh
     assert args.draft_root == str((out / "capcut_drafts").resolve())
     assert res["mp4s"] == [out.resolve() / "clip_01.mp4"]

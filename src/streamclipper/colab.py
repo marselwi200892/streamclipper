@@ -126,6 +126,8 @@ def _clip_argv(source: str, work: Path, o: dict) -> list:
             )
         argv += ["--input", str(src.resolve())]
     argv += ["--max-clips", str(int(o["max_clips"])), "--min-score", str(float(o["min_score"]))]
+    # clip length: the dashboard options have no clip-length fields, so missing keys keep the CLI defaults
+    argv += ["--min-dur", str(float(o.get("min_dur", 15.0))), "--max-dur", str(float(o.get("max_dur", 60.0)))]
     argv += ["--llm", o["llm"], "--whisper-model", o["whisper_model"]]
     argv += ["--device", o["device"], "--language", o["language"]]
     for flag, key in (
@@ -168,6 +170,8 @@ def run_pipeline(
     hook_style: str = "bold-box",
     min_score: float = 50.0,
     max_clips: int = 10,
+    min_dur: float = 15.0,
+    max_dur: float = 60.0,
     ratio: str = "9:16",
     llm: str = "none",
     render: bool = True,
@@ -192,6 +196,7 @@ def run_pipeline(
     CapCut drafts zipped to <out_dir>/capcut_drafts.zip (drafts). Same code path as 'streamclipper clip-stream'.
     Progress is saved in <out_dir>; running it again with the same inputs resumes (resume=False starts over).
     max_clips = how many clips get an MP4/draft (0 = every clip above min_score; all clips go to clips.json).
+    min_dur/max_dur = shortest and longest clip in seconds (rendered clips stay <= 59.5 s).
     Effects (all off by default): zoom off|light|medium|strong, remove_fillers, enhance_speech off|light|strong,
     brand_kit = path of a brand kit JSON (e.g. on Drive). hud = auto|off|gta5|gta6|generic.
     """
@@ -207,6 +212,8 @@ def run_pipeline(
         "prefix": prefix,
         "max_clips": max_clips,
         "min_score": min_score,
+        "min_dur": min_dur,
+        "max_dur": max_dur,
         "ratio": ratio,
         "llm": llm or "none",
         "whisper_model": whisper_model or "auto",
